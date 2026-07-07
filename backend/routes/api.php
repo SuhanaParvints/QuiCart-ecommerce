@@ -3,9 +3,11 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\ProductController;
 use App\Http\Controllers\Api\Admin\OrderController;
+use App\Http\Controllers\Api\Admin\ReviewController as AdminReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +20,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 /*
 |--------------------------------------------------------------------------
-| Public Product Routes (Frontend)
+| Public Product Routes
 |--------------------------------------------------------------------------
 */
 
@@ -27,9 +29,20 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 
 /*
 |--------------------------------------------------------------------------
-| TEMP ADMIN ROUTES (No Login Required)
+| Public Approved Reviews
 |--------------------------------------------------------------------------
 */
+
+Route::get('/products/{id}/reviews', [ReviewController::class, 'productReviews']);
+
+/*
+|--------------------------------------------------------------------------
+| TEMP ADMIN ROUTES - No Login Required
+|--------------------------------------------------------------------------
+*/
+
+/* Dashboard */
+Route::get('/admin/dashboard', [OrderController::class, 'dashboard']);
 
 /* Users */
 Route::get('/admin/users', [UserController::class, 'index']);
@@ -45,16 +58,17 @@ Route::delete('/admin/orders/{id}', [OrderController::class, 'destroy']);
 
 /* Products */
 Route::get('/admin/products', [ProductController::class, 'index']);
-
-Route::post('/admin/products/upload-image', [
-    ProductController::class,
-    'uploadImage'
-]);
-
+Route::post('/admin/products/upload-image', [ProductController::class, 'uploadImage']);
 Route::post('/admin/products', [ProductController::class, 'store']);
 Route::get('/admin/products/{id}', [ProductController::class, 'show']);
 Route::put('/admin/products/{id}', [ProductController::class, 'update']);
 Route::delete('/admin/products/{id}', [ProductController::class, 'destroy']);
+
+/* Reviews */
+Route::get('/admin/reviews', [AdminReviewController::class, 'index']);
+Route::get('/admin/reviews/dashboard', [AdminReviewController::class, 'dashboard']);
+Route::put('/admin/reviews/{id}/status', [AdminReviewController::class, 'updateStatus']);
+Route::delete('/admin/reviews/{id}', [AdminReviewController::class, 'destroy']);
 
 /*
 |--------------------------------------------------------------------------
@@ -63,7 +77,6 @@ Route::delete('/admin/products/{id}', [ProductController::class, 'destroy']);
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-
     /* User Profile */
     Route::get('/user', [AuthController::class, 'user']);
     Route::put('/user/profile', [AuthController::class, 'updateProfile']);
@@ -76,6 +89,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders', [OrderController::class, 'store']);
     Route::put('/orders/{id}/cancel', [OrderController::class, 'cancel']);
 
-    /* Dashboard */
-    Route::get('/admin/dashboard', [OrderController::class, 'dashboard']);
+    /* Submit Product Review */
+    Route::post('/products/{id}/reviews', [ReviewController::class, 'store']);
 });

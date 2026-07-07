@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -81,16 +84,31 @@ class OrderController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function dashboard()
-    {
-        return response()->json([
-            'users' => \App\Models\User::count(),
-            'orders' => Order::count(),
-            'revenue' => Order::sum('total_price'),
-            'pending_orders' => Order::where('status', 'Pending')->count()
-        ]);
-    }
+public function dashboard()
+{
+    return response()->json([
+        'total_users' => User::count(),
 
+        'total_orders' => Order::count(),
+        'pending_orders' => Order::where('status', 'Pending')->count(),
+        'shipped_orders' => Order::where('status', 'Shipped')->count(),
+        'completed_orders' => Order::where('status', 'Delivered')->count(),
+        'cancelled_orders' => Order::where('status', 'Cancelled')->count(),
+
+        'total_products' => Product::count(),
+        'in_stock_products' => Product::where('status', 'in_stock')->count(),
+        'limited_stock_products' => Product::where('status', 'limited_stock')->count(),
+        'sold_out_products' => Product::where('status', 'sold_out')->count(),
+
+        'total_reviews' => Review::count(),
+        'approved_reviews' => Review::where('status', 'approved')->count(),
+        'pending_reviews' => Review::where('status', 'pending')->count(),
+        'rejected_reviews' => Review::where('status', 'rejected')->count(),
+        'average_rating' => round(Review::avg('rating') ?? 0, 1),
+
+        'total_revenue' => Order::where('status', 'Delivered')->sum('total_price'),
+    ]);
+}
     /*
     |--------------------------------------------------------------------------
     | Admin Orders
