@@ -12,7 +12,12 @@
       <NuxtLink to="/admin/products" class="admin-link">Products</NuxtLink>
       <NuxtLink to="/admin/orders" class="admin-link">Orders</NuxtLink>
       <NuxtLink to="/admin/reviews" class="admin-link">Reviews</NuxtLink>
-     
+     <NuxtLink
+  to="/admin/payments"
+  class="block rounded-xl px-4 py-3 transition hover:bg-purple-600 hover:text-white"
+>
+  Payments
+</NuxtLink>
     </nav>
   </aside>
 </template>
